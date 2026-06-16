@@ -1,14 +1,13 @@
-// 1. Les imports (une seule fois !)
 const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
 require('dotenv').config();
 
-// 2. Initialisation du client (une seule fois !)
+// Initialisation unique du client
 const client = new Client({ 
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
 });
 
-// 3. Initialisation du serveur express
+// Initialisation unique du serveur express
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -20,8 +19,9 @@ app.listen(port, () => {
   console.log(`Serveur de maintien en ligne actif sur le port ${port}`);
 });
 
-// 4. Votre code de bot (événements, etc.)
+// Démarrage du bot
 console.log("Le bot est en train de démarrer...");
+client.login(process.env.DISCORD_TOKEN);
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
