@@ -1,3 +1,8 @@
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.send('Bot en ligne'));
+app.listen(3000);
+
 const { 
     Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, 
     ButtonStyle, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder, 
