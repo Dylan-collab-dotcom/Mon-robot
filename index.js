@@ -1,3 +1,5 @@
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 console.log("Le bot est en train de démarrer...");
 require('dotenv').config();
 
