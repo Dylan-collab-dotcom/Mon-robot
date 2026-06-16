@@ -414,42 +414,40 @@ client.on('interactionCreate', async (interaction) => {
 
         if (txtS2.includes("respect") || txtS2.includes("gentiment") || txtS2.includes("poliment") || txtS2.includes("désolé")) score += 2;
         if (txtS2.includes("autre") || txtS2.includes("proposer") || txtS2.includes("alternative") || txtS2.includes("remplacer")) score += 2;
-        if (txtS3.includes("copine") || txtS3.includes("girlfriend") || txtS3.includes("relation") || txtS3.includes("attachement")) score += 2;
+        if (txtS3.includes("copine") || txtS3.includes("girlfriend") || txtS3.includes("relation") || txtS3.includes("attachement")) score += 2;
 
-        if (txtChatting.includes("fidélis") || txtS3.includes("fidélis") || txtChatting.includes("long terme") || txtS3.includes("long terme")) score += 2;
-        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtS3.includes("émotion")) score += 2;
+        if (txtChatting.includes("fidélis") || txtS3.includes("fidélis") || txtChatting.includes("long terme") || txtS3.includes("long terme")) score += 2;
+        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtS3.includes("émotion")) score += 2;
 
-        const noteFinale = Math.min(Math.round(score), 20);
+        const noteFinale = Math.min(Math.round(score), 20);
 
-        let mention = "❌ À fuir / Non Validé";
-        let embedColor = 0xFF0000;
-        if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
-        if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
-        if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
-        if (logChannel) {
-            const logEmbed = new EmbedBuilder()
+        let mention = "❌ À fuir / Non Validé";
+        let embedColor = 0xFF0000;
+        if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
+        if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
+        if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
+        if (logChannel) {
+            const logEmbed = new EmbedBuilder()
 .setColor(embedColor)
-                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
-                .setDescription(`**Verdict final : ${mention}**`)
+                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
+                .setDescription(`**Verdict final : ${mention}**`)
 .setThumbnail(interaction.user.displayAvatarURL())
 .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false })
-                .addFields(embedFields)
-                .setFooter({ text: `Spider-Society • ID: ${userId}` })
-                .setTimestamp();
+                .addFields(embedFields)
+                .setFooter({ text: `Spider-Society • ID: ${userId}` })
+                .setTimestamp();
 
 
-            await logChannel.send({ embeds: [logEmbed] });
-        }
+            await logChannel.send({ embeds: [logEmbed] });
+        }
 
-        tempAnswers.delete(userId);
-        await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
-        
-        // Le global setTimeout fonctionne de base en Node.js, pas besoin d'import supplémentaire
-        setTimeout(() => {
-            interaction.channel.delete().catch(() => {});
-        }, 10000);
-    }
+        tempAnswers.delete(userId);
+        await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
+        
+        // Le global setTimeout fonctionne de base en Node.js, pas besoin d'import supplémentaire
+        setTimeout(() => {
+            interaction.channel.delete().catch(() => {});
+        }, 10000);
+    }
 });
-
-// LOGIN (Attention à renouveler ton token sur ton interface Discord de développement)
-const token = process.env.DISCORD_TOKEN;
+client.login(process.env.DISCORD_TOKEN);
