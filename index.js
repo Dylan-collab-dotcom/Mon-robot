@@ -6,11 +6,11 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-  res.send('Bot Discord en ligne');
+  res.send('Bot Discord est en ligne !');
 });
 
 app.listen(port, () => {
-  console.log(`Serveur actif sur le port ${port}`);
+  console.log(`Serveur de maintien en ligne actif sur le port ${port}`);
 });
 
 const client = new Client({
