@@ -1,11 +1,17 @@
 console.log("Le bot est en train de démarrer...");
 require('dotenv').config();
 
-const { 
-    Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, 
-    ButtonStyle, ChannelType, PermissionFlagsBits, StringSelectMenuBuilder, 
-    StringSelectMenuOptionBuilder, ModalBuilder, TextInputBuilder, TextInputStyle 
-} = require('discord.js');
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Bot Discord en ligne');
+});
+
+app.listen(port, () => {
+  console.log(`Serveur actif sur le port ${port}`);
+});
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
