@@ -1,4 +1,5 @@
 console.log("Le bot est en train de démarrer...");
+require('dotenv').config();
 
 const { 
     Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, 
