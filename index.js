@@ -1,7 +1,4 @@
-const express = require('express');
-const app = express();
-app.get('/', (req, res) => res.send('Bot en ligne'));
-app.listen(3000);
+console.log("Le bot est en train de démarrer...");
 
 const { 
     Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, 
