@@ -1,3 +1,25 @@
+const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
+require('dotenv').config();
+
+// Initialisation unique du client
+const client = new Client({ 
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
+});
+
+// Initialisation unique du serveur express
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Bot Discord est en ligne !');
+});
+
+app.listen(port, () => {
+  console.log(`Serveur de maintien en ligne actif sur le port ${port}`);
+});
+
+
 // 1. IMPORTS DES MODULES (Tous les éléments de discord.js réunis ici)
 const { 
     Client, 
