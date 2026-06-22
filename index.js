@@ -1,4 +1,4 @@
-// 1. IMPORTS DES MODULES (Tous les éléments de discord.js réunis ici)
+// 1. IMPORTS DES MODULES
 const { 
     Client, 
     GatewayIntentBits, 
@@ -12,21 +12,24 @@ const {
     TextInputBuilder, 
     TextInputStyle, 
     ChannelType, 
-    PermissionFlagsBits,
-    MessageFlags
+    PermissionFlagsBits
 } = require('discord.js');
 const express = require('express');
 require('dotenv').config();
 
-// 2. INITIALISATION UNIQUE DU CLIENT & EXPRESS
+// 2. INITIALISATION DU CLIENT & EXPRESS
 const client = new Client({ 
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers
+    ] 
 });
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serveur Web de maintien en ligne
 app.get('/', (req, res) => {
     res.send('Bot Discord est en ligne !');
 });
@@ -37,8 +40,8 @@ app.listen(port, () => {
 
 // --- CONFIGURATION DU BOT ---
 const LOG_CHANNEL_ID = '1503731703145955359'; 
-const WELCOME_CHANNEL_ID = '1502587205611421867';  // Salon #pick-up
-const ANNONCE_CHANNEL_ID = '1508005069247741952';  // Salon #enseignement
+const WELCOME_CHANNEL_ID = '1502587205611421867'; // Salon #pick-up
+const ANNONCE_CHANNEL_ID = '1508005069247741952'; // Salon #enseignement
 // ----------------------------
 
 const tempAnswers = new Map();
@@ -85,7 +88,7 @@ client.on('messageCreate', async (message) => {
                 {
                     name: '📸 1. Gestion Tactique des Médias',
                     value: "• **Agression :** Évitez d’être trop agressif avec les médias. Alternez et chauffez les clients entre chaque média envoyé.\n" +
-                           "• **Suivi :** Après l'envoi du premier média, utilisez impérativement les messages pré-rédigés.\n" +
+                           "• **Suivi :** Après l'envoi du premier média, utilisez impérativement les messages pré-prédigés.\n" +
                            "• **Format d'envoi :** Les vidéos peuvent être envoyées toutes en même temps, mais **les photos doivent être envoyées une par une**.\n" +
                            "• **Demandes urgentes :** En cas de demande personnalisée d’un client, indiquez-le dans la section \"Demandes urgentes\" sur Discord pour un traitement rapide.\n" +
                            "• **Scripts & Prix :** Un script correspond à des montants de 20, 50, 70, 100 ou 200. Tout est noté dans l’onglet \"Créateur\". Attention : évitez d’envoyer un script de nuit en plein jour !\n" +
@@ -216,7 +219,6 @@ client.on('messageCreate', async (message) => {
             )
             .setFooter({ text: 'Spider-Society • Discipline = Cash 🔑' });
 
-        // Envois groupés par lots (limite globale de Discord respectée)
         await message.channel.send({ embeds: [embed1, embed2, embed3] });
         await message.channel.send({ embeds: [embed4, embed5, embed6] });
         await message.channel.send({ embeds: [embed7, embed8] });
@@ -226,22 +228,24 @@ client.on('messageCreate', async (message) => {
 // 4. GESTION DU FLUX DES INTERACTIONS (RECRUTEMENT)
 client.on('interactionCreate', async (interaction) => {
     const userId = interaction.user.id;
-    const { guild, user } = interaction;
+    const { guild, member } = interaction;
 
     // --- BOUTON RECRUTEMENT (#PICK-UP) ---
     if (interaction.isButton() && interaction.customId === 'open_ticket') {
         try {
-            const existingChannel = guild.channels.cache.find(c => c.name === `recrutement-de-${user.displayName.toLowerCase().replace(/\s+/g, '-')}`);
+            const safeName = `recrutement-de-${member.displayName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`;
+            const existingChannel = guild.channels.cache.find(c => c.name === safeName);
+            
             if (existingChannel) {
                 return await interaction.reply({ content: `⚠️ Tu as déjà un salon ouvert ici : ${existingChannel}`, ephemeral: true });
             }
 
             const channel = await guild.channels.create({
-                name: `recrutement-de-${user.displayName.toLowerCase().replace(/\s+/g, '-')}`,
+                name: safeName,
                 type: ChannelType.GuildText,
                 permissionOverwrites: [
                     { id: guild.roles.everyone, deny: [PermissionFlagsBits.ViewChannel] },
-                    { id: user.id, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] }
+                    { id: userId, allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory] }
                 ],
             });
 
@@ -255,17 +259,19 @@ client.on('interactionCreate', async (interaction) => {
             );
 
             await channel.send({ 
-                content: `${user}`, 
+                content: `<@${userId}>`, 
                 embeds: [new EmbedBuilder().setColor(0xFF0000).setTitle('🎯 Candidature').setDescription("Sélectionne le poste ci-dessous pour commencer.")], 
                 components: [menu] 
             });
+            
             await interaction.reply({ content: `✅ Salon créé : ${channel}`, ephemeral: true });
-        } catch (e) { console.error(e); }
-    }
-
-    // --- ÉTAPES MODALS ET SÉLECTION RECRUTEMENT ---
-    if (interaction.isStringSelectMenu() && interaction.customId === 'select_poste') {
-        const modal = new ModalBuilder().setCustomId('modal_infos').setTitle(`📝 Infos Personnelles (1/3)`);
+        } catch (e) { 
+            console.error(e); 
+        }
+    } 
+    // --- SÉLECTION DU POSTE ---
+    else if (interaction.isStringSelectMenu() && interaction.customId === 'select_poste') {
+        const modal = new ModalBuilder().setCustomId('modal_infos').setTitle('📝 Infos Personnelles (1/3)');
         modal.addComponents(
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q1').setLabel("Nom et âge").setPlaceholder("Ex: Thomas, 25 ans").setStyle(TextInputStyle.Short).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q2').setLabel("Origine et sexe").setPlaceholder("Ex: France, Homme").setStyle(TextInputStyle.Short).setRequired(true)),
@@ -274,9 +280,9 @@ client.on('interactionCreate', async (interaction) => {
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q5').setLabel("Jours de travail").setPlaceholder("Ex: 6/7 ou Lundi au Samedi").setStyle(TextInputStyle.Short).setRequired(true))
         );
         await interaction.showModal(modal);
-    }
-
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_infos') {
+    } 
+    // --- SOUMISSION MODAL 1 ---
+    else if (interaction.isModalSubmit() && interaction.customId === 'modal_infos') {
         const data = tempAnswers.get(userId) || {};
         data.infos = {
             nom: interaction.fields.getTextInputValue('q1'),
@@ -286,26 +292,30 @@ client.on('interactionCreate', async (interaction) => {
             jours: interaction.fields.getTextInputValue('q5')
         };
         tempAnswers.set(userId, data);
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p2').setLabel('🎯 Étape Suivante (Compétences)').setStyle(ButtonStyle.Success));
+        
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setCustomId('open_p2').setLabel('🎯 Étape Suivante (Compétences)').setStyle(ButtonStyle.Success)
+        );
         await interaction.reply({ content: "✅ Infos enregistrées ! Passons aux questions de compétences.", components: [row], ephemeral: true });
-    }
-
-    // FIX : Changement de la syntaxe de fonction fausse customId('open_p2') en vérification de propriété '==='
-    if (interaction.isButton() && interaction.customId === 'open_p2') {
+    } 
+    // --- BOUTON ÉTAPE 2 ---
+    else if (interaction.isButton() && interaction.customId === 'open_p2') {
         if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", ephemeral: true });
-        const modal = new ModalBuilder().setCustomId('modal_comp').setTitle(`Test de Compétences (2/3)`);
+        
+        const modal = new ModalBuilder().setCustomId('modal_comp').setTitle('Test de Compétences (2/3)');
         modal.addComponents(
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c1').setLabel("Comb de conv.tu gère en même temps ?").setPlaceholder("Ex: 5-8 conversations").setStyle(TextInputStyle.Short).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c1').setLabel("Comb de conv. tu gères en même temps ?").setPlaceholder("Ex: 5-8 conversations").setStyle(TextInputStyle.Short).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c2').setLabel("C'est quoi le chatting ?").setPlaceholder("Donne ta vision (lien, fidélisation, vente)...").setStyle(TextInputStyle.Paragraph).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c3').setLabel("Le KYC c'est quoi ?").setPlaceholder("Définition, ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c4').setLabel("Quoi faire attention chatting ?").setPlaceholder("Orthographe, réactivité, empathie").setStyle(TextInputStyle.Short).setRequired(true))
         );
         await interaction.showModal(modal);
-    }
-
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_comp') {
+    } 
+    // --- SOUMISSION MODAL 2 ---
+    else if (interaction.isModalSubmit() && interaction.customId === 'modal_comp') {
         const data = tempAnswers.get(userId);
-        if (!data) return;
+        if (!data) return await interaction.reply({ content: "❌ Session expirée.", ephemeral: true });
+        
         data.comp = {
             conv: interaction.fields.getTextInputValue('c1'),
             chatting: interaction.fields.getTextInputValue('c2'),
@@ -313,27 +323,29 @@ client.on('interactionCreate', async (interaction) => {
             attention: interaction.fields.getTextInputValue('c4')
         };
         tempAnswers.set(userId, data);
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p3').setLabel('✍️ Étape Suivante (Scénarios)').setStyle(ButtonStyle.Success));
+        
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder().setCustomId('open_p3').setLabel('✍️ Étape Suivante (Scénarios)').setStyle(ButtonStyle.Success)
+        );
         await interaction.reply({ content: "✅ Compétences validées ! Place aux scénarios de chat.", components: [row], ephemeral: true });
-    }
-
-    if (interaction.isButton() && interaction.customId === 'open_p3') {
+    } 
+    // --- BOUTON ÉTAPE 3 ---
+    else if (interaction.isButton() && interaction.customId === 'open_p3') {
         if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", ephemeral: true });
-        const modal = new ModalBuilder().setCustomId('modal_scen').setTitle(`Scénarios de Chat (3/3)`);
+        
+        const modal = new ModalBuilder().setCustomId('modal_scen').setTitle('Scénarios de Chat (3/3)');
         modal.addComponents(
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s1').setLabel("Scénario 1 : Ventes").setPlaceholder("L'abonné dit : 'je ne suis pas sûr de payer c'est trop chère'. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s2').setLabel("Scénario 2 : Contenu").setPlaceholder("The sub dmd un média que la modèle ne peut pas faire. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
             new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s3').setLabel("Scénario 3 : Terme GFE").setPlaceholder("Explique ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true))
         );
         await interaction.showModal(modal);
-    }
-
+    } 
     // --- SOUMISSION FINALE ET ANALYSE AUTOMATIQUE ---
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_scen') {
+    else if (interaction.isModalSubmit() && interaction.customId === 'modal_scen') {
         await interaction.deferReply({ ephemeral: true });
         const data = tempAnswers.get(userId);
         
-        // Sécurité pour éviter les plantages si la session est vide
         if (!data || !data.infos || !data.comp) {
             return await interaction.editReply({ content: "❌ Une erreur est survenue lors de la récupération de vos données." });
         }
@@ -376,8 +388,8 @@ client.on('interactionCreate', async (interaction) => {
         let mention = "❌ À fuir / Non Validé";
         let embedColor = 0xFF0000;
         if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
-        if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
-        if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
+        else if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
+        else if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
         
         if (logChannel) {
             const logEmbed = new EmbedBuilder()
@@ -394,11 +406,16 @@ client.on('interactionCreate', async (interaction) => {
         }
 
         tempAnswers.delete(userId);
-        await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
         
-        // Le global setTimeout fonctionne de base en Node.js, pas besoin d'import supplémentaire
+        await interaction.editReply({ 
+            content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` 
+        });
+        
+        // Suppression sécurisée du salon après 10 secondes
         setTimeout(() => {
-            interaction.channel.delete().catch(() => {});
+            if (interaction.channel && interaction.channel.deletable) {
+                interaction.channel.delete().catch(() => {});
+            }
         }, 10000);
     }
 });
