@@ -389,6 +389,18 @@ client.on('interactionCreate', async (interaction) => {
                 .setTimestamp();
 
             await logChannel.send({ embeds: [logEmbed] });
+        }if (logChannel) {
+            const logEmbed = new EmbedBuilder()
+                .setColor(embedColor)
+                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
+                .setDescription(`**Verdict final : ${mention}**`)
+                .setThumbnail(interaction.user.displayAvatarURL())
+                .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false }) // <--- Virgule ajoutée ici
+                .addFields(embedFields)
+                .setFooter({ text: `Spider-Society • ID: ${userId}` })
+                .setTimestamp();
+
+            await logChannel.send({ embeds: [logEmbed] });
         }
 
         tempAnswers.delete(userId);
