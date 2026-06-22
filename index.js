@@ -1,25 +1,3 @@
-const { Client, GatewayIntentBits } = require('discord.js');
-const express = require('express');
-require('dotenv').config();
-
-// Initialisation unique du client
-const client = new Client({ 
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
-});
-
-// Initialisation unique du serveur express
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Bot Discord est en ligne !');
-});
-
-app.listen(port, () => {
-  console.log(`Serveur de maintien en ligne actif sur le port ${port}`);
-});
-
-
 // 1. IMPORTS DES MODULES (Tous les éléments de discord.js réunis ici)
 const { 
     Client, 
@@ -399,20 +377,19 @@ client.on('interactionCreate', async (interaction) => {
         if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
         if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
         if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
-        if (logChannel) {
-            const logEmbed = new EmbedBuilder()
-.setColor(embedColor)
-                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
-                .setDescription(`**Verdict final : ${mention}**`)
-.setThumbnail(interaction.user.displayAvatarURL())
-.addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false })
-                .addFields(embedFields)
-                .setFooter({ text: `Spider-Society • ID: ${userId}` })
-                .setTimestamp();
+        if (logChannel) {
+            const logEmbed = new EmbedBuilder()
+                .setColor(embedColor)
+                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
+                .setDescription(`**Verdict final : ${mention}**`)
+                .setThumbnail(interaction.user.displayAvatarURL())
+                .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false }) // <--- Virgule ajoutée ici
+                .addFields(embedFields)
+                .setFooter({ text: `Spider-Society • ID: ${userId}` })
+                .setTimestamp();
 
-
-            await logChannel.send({ embeds: [logEmbed] });
-        }
+            await logChannel.send({ embeds: [logEmbed] });
+        }
 
         tempAnswers.delete(userId);
         await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
