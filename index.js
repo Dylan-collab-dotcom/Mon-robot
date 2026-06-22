@@ -130,7 +130,7 @@ client.on('messageCreate', async (message) => {
                 },
                 {
                     name: '📖 Présentation Perso Storytelling',
-                    value: "« Moi je suis étudiante en marketing :) j’essaye de me débrouiller comme je peux... »"
+                    value: "« Moi je suis étudiante en marketing :) j’essaye de me débrouille comme je peux... »"
                 },
                 {
                     name: '🛑 Gestion des Demandes IRL / Réseaux Précoces',
@@ -262,140 +262,128 @@ client.on('interactionCreate', async (interaction) => {
         } catch (e) { console.error(e); }
     }
 
-    // --- ÉTAPES MODALS ET SÉLECTION RECRUTEMENT ---
-    if (interaction.isStringSelectMenu() && interaction.customId === 'select_poste') {
-        const modal = new ModalBuilder().setCustomId('modal_infos').setTitle(`📝 Infos Personnelles (1/3)`);
-        modal.addComponents(
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q1').setLabel("Nom et âge").setPlaceholder("Ex: Thomas, 25 ans").setStyle(TextInputStyle.Short).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q2').setLabel("Origine et sexe").setPlaceholder("Ex: France, Homme").setStyle(TextInputStyle.Short).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q3').setLabel("Expérience (OF)").setPlaceholder("Détaille tes expériences passées...").setStyle(TextInputStyle.Paragraph).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q4').setLabel("Langues maîtrisées").setPlaceholder("Ex: Français, Anglais").setStyle(TextInputStyle.Short).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q5').setLabel("Jours de travail").setPlaceholder("Ex: 6/7 ou Lundi au Samedi").setStyle(TextInputStyle.Short).setRequired(true))
-        );
-        await interaction.showModal(modal);
-    }
+    // --- ÉTAPES MODALS ET SÉLECTION RECRUTEMENT ---
+    if (interaction.isStringSelectMenu() && interaction.customId === 'select_poste') {
+        const modal = new ModalBuilder().setCustomId('modal_infos').setTitle(`📝 Infos Personnelles (1/3)`);
+        modal.addComponents(
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q1').setLabel("Nom et âge").setPlaceholder("Ex: Thomas, 25 ans").setStyle(TextInputStyle.Short).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q2').setLabel("Origine et sexe").setPlaceholder("Ex: France, Homme").setStyle(TextInputStyle.Short).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q3').setLabel("Expérience (OF)").setPlaceholder("Détaille tes expériences passées...").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q4').setLabel("Langues maîtrisées").setPlaceholder("Ex: Français, Anglais").setStyle(TextInputStyle.Short).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('q5').setLabel("Jours de travail").setPlaceholder("Ex: 6/7 ou Lundi au Samedi").setStyle(TextInputStyle.Short).setRequired(true))
+        );
+        await interaction.showModal(modal);
+    }
 
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_infos') {
-        const data = tempAnswers.get(userId) || {};
-        data.infos = {
-            nom: interaction.fields.getTextInputValue('q1'),
-            origine: interaction.fields.getTextInputValue('q2'),
-            exp: interaction.fields.getTextInputValue('q3'),
-            langues: interaction.fields.getTextInputValue('q4'),
-            jours: interaction.fields.getTextInputValue('q5')
-        };
-        tempAnswers.set(userId, data);
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p2').setLabel('🎯 Étape Suivante (Compétences)').setStyle(ButtonStyle.Success));
-        await interaction.reply({ content: "✅ Infos enregistrées ! Passons aux questions de compétences.", components: [row], flags: [64] });
-    }
+    if (interaction.isModalSubmit() && interaction.customId === 'modal_infos') {
+        const data = tempAnswers.get(userId) || {};
+        data.infos = {
+            nom: interaction.fields.getTextInputValue('q1'),
+            origine: interaction.fields.getTextInputValue('q2'),
+            exp: interaction.fields.getTextInputValue('q3'),
+            langues: interaction.fields.getTextInputValue('q4'),
+            jours: interaction.fields.getTextInputValue('q5')
+        };
+        tempAnswers.set(userId, data);
+        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p2').setLabel('🎯 Étape Suivante (Compétences)').setStyle(ButtonStyle.Success));
+        await interaction.reply({ content: "✅ Infos enregistrées ! Passons aux questions de compétences.", components: [row], flags: [64] });
+    }
 
-    // FIX : Changement de la syntaxe de fonction fausse customId('open_p2') en vérification de propriété '==='
-    if (interaction.isButton() && interaction.customId === 'open_p2') {
-        if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", flags: [64] });
-        const modal = new ModalBuilder().setCustomId('modal_comp').setTitle(`Test de Compétences (2/3)`);
-        modal.addComponents(
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c1').setLabel("Comb de conv.tu gère en même temps ?").setPlaceholder("Ex: 5-8 conversations").setStyle(TextInputStyle.Short).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c2').setLabel("C'est quoi le chatting ?").setPlaceholder("Donne ta vision (lien, fidélisation, vente)...").setStyle(TextInputStyle.Paragraph).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c3').setLabel("Le KYC c'est quoi ?").setPlaceholder("Définition, ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c4').setLabel("Quoi faire attention chatting ?").setPlaceholder("Orthographe, réactivité, empathie").setStyle(TextInputStyle.Short).setRequired(true))
-        );
-        await interaction.showModal(modal);
-    }
+    if (interaction.isButton() && interaction.customId === 'open_p2') {
+        if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", flags: [64] });
+        const modal = new ModalBuilder().setCustomId('modal_comp').setTitle(`Test de Compétences (2/3)`);
+        modal.addComponents(
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c1').setLabel("Comb de conv.tu gère en même temps ?").setPlaceholder("Ex: 5-8 conversations").setStyle(TextInputStyle.Short).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c2').setLabel("C'est quoi le chatting ?").setPlaceholder("Donne ta vision (lien, fidélisation, vente)...").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c3').setLabel("Le KYC c'est quoi ?").setPlaceholder("Définition, ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('c4').setLabel("Quoi faire attention chatting ?").setPlaceholder("Orthographe, réactivité, empathie").setStyle(TextInputStyle.Short).setRequired(true))
+        );
+        await interaction.showModal(modal);
+    }
 
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_comp') {
-        const data = tempAnswers.get(userId);
-        if (!data) return;
-        data.comp = {
-            conv: interaction.fields.getTextInputValue('c1'),
-            chatting: interaction.fields.getTextInputValue('c2'),
-            kyc: interaction.fields.getTextInputValue('c3'),
-            attention: interaction.fields.getTextInputValue('c4')
-        };
-        tempAnswers.set(userId, data);
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p3').setLabel('✍️ Étape Suivante (Scénarios)').setStyle(ButtonStyle.Success));
-        await interaction.reply({ content: "✅ Compétences validées ! Place aux scénarios de chat.", components: [row], flags: [64] });
-    }
+    if (interaction.isModalSubmit() && interaction.customId === 'modal_comp') {
+        const data = tempAnswers.get(userId);
+        if (!data) return;
+        data.comp = {
+            conv: interaction.fields.getTextInputValue('c1'),
+            chatting: interaction.fields.getTextInputValue('c2'),
+            kyc: interaction.fields.getTextInputValue('c3'),
+            attention: interaction.fields.getTextInputValue('c4')
+        };
+        tempAnswers.set(userId, data);
+        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('open_p3').setLabel('✍️ Étape Suivante (Scénarios)').setStyle(ButtonStyle.Success));
+        await interaction.reply({ content: "✅ Compétences validées ! Place aux scénarios de chat.", components: [row], flags: [64] });
+    }
 
-    if (interaction.isButton() && interaction.customId === 'open_p3') {
-        if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", flags: [64] });
-        const modal = new ModalBuilder().setCustomId('modal_scen').setTitle(`Scénarios de Chat (3/3)`);
-        modal.addComponents(
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s1').setLabel("Scénario 1 : Ventes").setPlaceholder("L'abonné dit : 'je ne suis pas sûr de payer c'est trop chère'. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s2').setLabel("Scénario 2 : Contenu").setPlaceholder("Le sub dmd un média que la modèle ne peut pas faire. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
-            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s3').setLabel("Scénario 3 : Terme GFE").setPlaceholder("Explique ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true))
-        );
-        await interaction.showModal(modal);
-    }
+    if (interaction.isButton() && interaction.customId === 'open_p3') {
+        if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", flags: [64] });
+        const modal = new ModalBuilder().setCustomId('modal_scen').setTitle(`Scénarios de Chat (3/3)`);
+        modal.addComponents(
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s1').setLabel("Scénario 1 : Ventes").setPlaceholder("L'abonné dit : 'je ne suis pas sûr de payer c'est trop chère'. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s2').setLabel("Scénario 2 : Contenu").setPlaceholder("Le sub dmd un média que la modèle ne peut pas faire. Comment réponds-tu ?").setStyle(TextInputStyle.Paragraph).setRequired(true)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('s3').setLabel("Scénario 3 : Terme GFE").setPlaceholder("Explique ce que ça représente pour toi et son importance.").setStyle(TextInputStyle.Paragraph).setRequired(true))
+        );
+        await interaction.showModal(modal);
+    }
 
-    // --- SOUMISSION FINALE ET ANALYSE AUTOMATIQUE ---
-    if (interaction.isModalSubmit() && interaction.customId === 'modal_scen') {
-        await interaction.deferReply();
-        const data = tempAnswers.get(userId);
-        
-        // Sécurité pour éviter les plantages si la session est vide
-        if (!data || !data.infos || !data.comp) {
-            return await interaction.editReply({ content: "❌ Une erreur est survenue lors de la récupération de vos données." });
-        }
+    // --- SOUMISSION FINALE ET ANALYSE AUTOMATIQUE ---
+    if (interaction.isModalSubmit() && interaction.customId === 'modal_scen') {
+        await interaction.deferReply();
+        const data = tempAnswers.get(userId);
+        
+        // Sécurité pour éviter les plantages si la session est vide
+        if (!data || !data.infos || !data.comp) {
+            return await interaction.editReply({ content: "❌ Une erreur est survenue lors de la récupération de vos données." });
+        }
 
-        const logChannel = interaction.guild.channels.cache.get(LOG_CHANNEL_ID);
-        
-        const txtChatting = data.comp.chatting ? data.comp.chatting.toLowerCase() : "";
-        const txtKyc = data.comp.kyc ? data.comp.kyc.toLowerCase() : "";
-        const txtS1 = interaction.fields.getTextInputValue('s1').toLowerCase();
-        const txtS2 = interaction.fields.getTextInputValue('s2').toLowerCase();
-        const txtS3 = interaction.fields.getTextInputValue('s3').toLowerCase();
+        const logChannel = interaction.guild.channels.cache.get(LOG_CHANNEL_ID);
+        
+        const txtChatting = data.comp.chatting ? data.comp.chatting.toLowerCase() : "";
+        const txtKyc = data.comp.kyc ? data.comp.kyc.toLowerCase() : "";
+        const txtS1 = interaction.fields.getTextInputValue('s1').toLowerCase();
+        const txtS2 = interaction.fields.getTextInputValue('s2').toLowerCase();
+        const txtS3 = interaction.fields.getTextInputValue('s3').toLowerCase();
 
-        const embedFields = [
-            { name: '👤 Informations Candidat', value: `**Nom/Age:** ${data.infos.nom}\n**Langues:** ${data.infos.langues}\n**Dispo:** ${data.infos.jours}`, inline: false },
-            { name: '📩 Expérience (OF)', value: data.infos.exp, inline: false },
-            { name: '🧠 Réponses aux Compétences', value: `**Simultané :** ${data.comp.conv}\n**Vision Chatting :** ${data.comp.chatting}\n**Définition KYC :** ${data.comp.kyc}\n**Points de vigilance :** ${data.comp.attention}`, inline: false },
-            { name: '🎭 Scénarios Pratiques', value: `**S1 (Prix) :** ${interaction.fields.getTextInputValue('s1')}\n**S2 (Refus) :** ${interaction.fields.getTextInputValue('s2')}\n**S3 (GFE) :** ${interaction.fields.getTextInputValue('s3')}`, inline: false }
-        ];
+        const embedFields = [
+            { name: '👤 Informations Candidat', value: `**Nom/Age:** ${data.infos.nom}\n**Langues:** ${data.infos.langues}\n**Dispo:** ${data.infos.jours}`, inline: false },
+            { name: '📩 Expérience (OF)', value: data.infos.exp, inline: false },
+            { name: '🧠 Réponses aux Compétences', value: `**Simultané :** ${data.comp.conv}\n**Vision Chatting :** ${data.comp.chatting}\n**Définition KYC :** ${data.comp.kyc}\n**Points de vigilance :** ${data.comp.attention}`, inline: false },
+            { name: '🎭 Scénarios Pratiques', value: `**S1 (Prix) :** ${interaction.fields.getTextInputValue('s1')}\n**S2 (Refus) :** ${interaction.fields.getTextInputValue('s2')}\n**S3 (GFE) :** ${interaction.fields.getTextInputValue('s3')}`, inline: false }
+        ];
 
-        // --- CALCUL DU SCORE ---
-        let score = 0;
+        // --- CALCUL DU SCORE ---
+        let score = 0;
 
-        if (txtKyc.includes("connaître") || txtKyc.includes("connaitre") || txtKyc.includes("savoir")) score += 2;
-        if (txtKyc.includes("info") || txtKyc.includes("base") || txtKyc.includes("ficher") || txtKyc.includes("notes") || txtKyc.includes("profil")) score += 1.5;
-        if (txtKyc.includes("besoin") || txtKyc.includes("goût") || txtKyc.includes("gout") || txtKyc.includes("préférence")) score += 1.5;
+        if (txtKyc.includes("connaître") || txtKyc.includes("connaitre") || txtKyc.includes("savoir")) score += 2;
+        if (txtKyc.includes("info") || txtKyc.includes("base") || txtKyc.includes("ficher") || txtKyc.includes("notes") || txtKyc.includes("profil")) score += 1.5;
+        if (txtKyc.includes("besoin") || txtKyc.includes("goût") || txtKyc.includes("gout") || txtKyc.includes("préférence")) score += 1.5;
 
-        if (txtS1.includes("pourquoi") || txtS1.includes("valeur") || txtS1.includes("qualité") || txtS1.includes("unique")) score += 2;
-        if (txtS1.includes("négoc") || txtS1.includes("prix") || txtS1.includes("réduction") || txtS1.includes("promo") || txtS1.includes("offre")) score += 1.5;
-        if (txtS1.includes("confiance") || txtS1.includes("plaisir") || txtS1.includes("te faire")) score += 1.5;
+        if (txtS1.includes("pourquoi") || txtS1.includes("valeur") || txtS1.includes("qualité") || txtS1.includes("unique")) score += 2;
+        if (txtS1.includes("négoc") || txtS1.includes("prix") || txtS1.includes("réduction") || txtS1.includes("promo") || txtS1.includes("offre")) score += 1.5;
+        if (txtS1.includes("confiance") || txtS1.includes("plaisir") || txtS1.includes("te faire")) score += 1.5;
 
-        if (txtS2.includes("respect") || txtS2.includes("gentiment") || txtS2.includes("poliment") || txtS2.includes("désolé")) score += 2;
-        if (txtS2.includes("autre") || txtS2.includes("proposer") || txtS2.includes("alternative") || txtS2.includes("remplacer")) score += 2;
+        if (txtS2.includes("respect") || txtS2.includes("gentiment") || txtS2.includes("poliment") || txtS2.includes("désolé")) score += 2;
+        if (txtS2.includes("autre") || txtS2.includes("proposer") || txtS2.includes("alternative") || txtS2.includes("remplacer")) score += 2;
         if (txtS3.includes("copine") || txtS3.includes("girlfriend") || txtS3.includes("relation") || txtS3.includes("attachement")) score += 2;
 
-        if (txtChatting.includes("fidélis") || txtS3.includes("fidélis") || txtChatting.includes("long terme") || txtS3.includes("long terme")) score += 2;
-        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtS3.includes("émotion")) score += 2;
+        if (txtChatting.includes("fidélis") || txtS3.includes("fidélis") || txtChatting.includes("long terme") || txtS3.includes("long terme")) score += 2;
+        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtS3.includes("émotion")) score += 2;
 
-        const noteFinale = Math.min(Math.round(score), 20);
+        const noteFinale = Math.min(Math.round(score), 20);
 
-        let mention = "❌ À fuir / Non Validé";
-        let embedColor = 0xFF0000;
-        if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
-        if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
-        if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
+        let mention = "❌ À fuir / Non Validé";
+        let embedColor = 0xFF0000;
+        if (noteFinale >= 10 && noteFinale < 14) { mention = "⚡ Profil Moyen"; embedColor = 0xFFAA00; }
+        if (noteFinale >= 14 && noteFinale < 17) { mention = "💎 Bon Profil / Validé"; embedColor = 0x00FFAA; }
+        if (noteFinale >= 17) { mention = "👑 PROFIL ÉLITE (Top Chatter)"; embedColor = 0xFF00FF; }
+        
         if (logChannel) {
             const logEmbed = new EmbedBuilder()
                 .setColor(embedColor)
                 .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
                 .setDescription(`**Verdict final : ${mention}**`)
                 .setThumbnail(interaction.user.displayAvatarURL())
-                .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false }) // <--- Virgule ajoutée ici
-                .addFields(embedFields)
-                .setFooter({ text: `Spider-Society • ID: ${userId}` })
-                .setTimestamp();
-
-            await logChannel.send({ embeds: [logEmbed] });
-        }if (logChannel) {
-            const logEmbed = new EmbedBuilder()
-                .setColor(embedColor)
-                .setTitle(`📊 RAPPORT D'ÉVALUATION (RECRUTEMENT) : ${interaction.user.tag}`)
-                .setDescription(`**Verdict final : ${mention}**`)
-                .setThumbnail(interaction.user.displayAvatarURL())
-                .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false }) // <--- Virgule ajoutée ici
+                .addFields({ name: '⭐ Note Automatique', value: `**Note : ${noteFinale}/20**`, inline: false })
                 .addFields(embedFields)
                 .setFooter({ text: `Spider-Society • ID: ${userId}` })
                 .setTimestamp();
@@ -403,13 +391,14 @@ client.on('interactionCreate', async (interaction) => {
             await logChannel.send({ embeds: [logEmbed] });
         }
 
-        tempAnswers.delete(userId);
-        await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
-        
-        // Le global setTimeout fonctionne de base en Node.js, pas besoin d'import supplémentaire
-        setTimeout(() => {
-            interaction.channel.delete().catch(() => {});
-        }, 10000);
-    }
+        tempAnswers.delete(userId);
+        await interaction.editReply({ content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` });
+        
+        // Le global setTimeout fonctionne de base en Node.js, pas besoin d'import supplémentaire
+        setTimeout(() => {
+            interaction.channel.delete().catch(() => {});
+        }, 10000);
+    }
 });
+
 client.login(process.env.DISCORD_TOKEN);
