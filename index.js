@@ -1,4 +1,3 @@
-// 1. IMPORTS DES MODULES
 const { 
     Client, 
     GatewayIntentBits, 
@@ -17,7 +16,6 @@ const {
 const express = require('express');
 require('dotenv').config();
 
-// 2. INITIALISATION DU CLIENT & EXPRESS
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds, 
@@ -42,7 +40,6 @@ app.listen(port, () => {
 const LOG_CHANNEL_ID = '1503731703145955359'; 
 const WELCOME_CHANNEL_ID = '1502587205611421867'; // Salon #pick-up
 const ANNONCE_CHANNEL_ID = '1508005069247741952'; // Salon #enseignement
-// ----------------------------
 
 const tempAnswers = new Map();
 
@@ -158,7 +155,7 @@ client.on('messageCreate', async (message) => {
                     value: "Ouverture obligatoire : *« Bon ok, j’ai une question à te poser... qu’est-ce qui t’a vraiment ramené ici ? »*\n" +
                            "• **A) LES SEINS :** ➔ CTA: « je t’envoie un petit aperçu privé ? »\n" +
                            "• **B) TON CUL :** ➔ CTA: « tu veux la vue arrière maintenant ? »\n" +
-                           "• **C) JUSTE POUR PARLER :** « tu crois que tu pourrais me faire passer mon ennui ? »"
+                           "• **C) JUSTE POUR PARLAR :** « tu crois que tu pourrais me faire passer mon ennui ? »"
                 },
                 {
                     name: '⚡ RÈGLES D’OR INVIOLABLES DES CHATTEURS',
