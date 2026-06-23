@@ -49,12 +49,32 @@ client.once('ready', () => {
 
 // 3. GESTION DES SALONS TEXTUELS
 client.on('messageCreate', async (message) => {
+    
+    // --- NETTOYAGE AUTO : SALON #PICK-UP (20 SECONDES) ---
+    if (message.channel.id === WELCOME_CHANNEL_ID) {
+        setTimeout(() => {
+            message.delete().catch(() => {});
+        }, 20000); 
+    }
+
+    // --- NETTOYAGE AUTO : SALON #ENSEIGNEMENT ---
+    if (message.channel.id === ANNONCE_CHANNEL_ID) {
+        // 1. Si c'est le BOT, on programme la suppression dans 2 heures
+        if (message.author.id === client.user.id) {
+            setTimeout(() => {
+                message.delete().catch(() => {});
+            }, 7200000); // 2 heures
+        } 
+        // 2. Si c'est un UTILISATEUR, on supprime INSTANTANÉMENT son message
+        else if (!message.author.bot) {
+            await message.delete().catch(() => {});
+        }
+    }
+
     if (message.author.bot) return;
 
     // --- SALON #PICK-UP (RECRUTEMENT AUTOMATIQUE) ---
     if (message.channel.id === WELCOME_CHANNEL_ID) {
-        await message.delete().catch(() => {});
-
         const welcomeEmbed = new EmbedBuilder()
             .setColor(0xFF0000)
             .setTitle('👋 Bienvenue — Spider-society')
@@ -74,7 +94,7 @@ client.on('messageCreate', async (message) => {
 
     // --- SALON #ENSEIGNEMENT (FORMATION EN EMBEDS) ---
     if (message.channel.id === ANNONCE_CHANNEL_ID && message.content.toLowerCase().trim() === 'formation') {
-        await message.delete().catch(() => {});
+        // NOTE: Le message de l'utilisateur est déjà supprimé instantanément par la règle du haut !
 
         // EMBED 1 : GESTION DES MÉDIAS
         const embed1 = new EmbedBuilder()
@@ -121,7 +141,7 @@ client.on('messageCreate', async (message) => {
                            "• *Tu viens d’où ?*\n" +
                            "• *D’ailleurs tu as quel âge ? J’aime bien savoir à qui je parle :))*\n" +
                            "• *Et tu vis où ?*\n" +
-                           "• *D’ailleurs tu fais quoi dans la vie ? 🤭*\n" +
+                           "• *D’ailleurs tu fait quoi dans la vie ? 🤭*\n" +
                            "• *Tu fais quoi de tes journées en dehors du boulot ?*"
                 },
                 {
@@ -227,7 +247,6 @@ client.on('interactionCreate', async (interaction) => {
     const userId = interaction.user.id;
     const { guild, member } = interaction;
 
-    // --- BOUTON RECRUTEMENT (#PICK-UP) ---
     if (interaction.isButton() && interaction.customId === 'open_ticket') {
         try {
             const safeName = `recrutement-de-${member.displayName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`;
@@ -235,11 +254,6 @@ client.on('interactionCreate', async (interaction) => {
             
             if (existingChannel) {
                 return await interaction.reply({ content: `⚠️ Tu as déjà un salon ouvert ici : ${existingChannel}`, ephemeral: true });
-            }
-
-            // Suppression du message contenant l'embed de bienvenue dans #pick-up pour qu'il ne s'accumule pas
-            if (interaction.message) {
-                await interaction.message.delete().catch(() => {});
             }
 
             const channel = await guild.channels.create({
@@ -266,14 +280,12 @@ client.on('interactionCreate', async (interaction) => {
                 components: [menu] 
             });
             
-            // L'interaction répond de manière ÉPHÉMÈRE (le message disparaît et ne reste pas dans le salon public #pick-up)
             await interaction.reply({ content: `✅ Salon créé avec succès !`, ephemeral: true });
 
         } catch (e) { 
             console.error(e); 
         }
     } 
-    // --- SÉLECTION DU POSTE ---
     else if (interaction.isStringSelectMenu() && interaction.customId === 'select_poste') {
         const modal = new ModalBuilder().setCustomId('modal_infos').setTitle('📝 Infos Personnelles (1/3)');
         modal.addComponents(
@@ -285,7 +297,6 @@ client.on('interactionCreate', async (interaction) => {
         );
         await interaction.showModal(modal);
     } 
-    // --- SOUMISSION MODAL 1 ---
     else if (interaction.isModalSubmit() && interaction.customId === 'modal_infos') {
         const data = tempAnswers.get(userId) || {};
         data.infos = {
@@ -302,7 +313,6 @@ client.on('interactionCreate', async (interaction) => {
         );
         await interaction.reply({ content: "✅ Infos enregistrées ! Passons aux questions de compétences.", components: [row], ephemeral: true });
     } 
-    // --- BOUTON ÉTAPE 2 ---
     else if (interaction.isButton() && interaction.customId === 'open_p2') {
         if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", ephemeral: true });
         
@@ -315,7 +325,6 @@ client.on('interactionCreate', async (interaction) => {
         );
         await interaction.showModal(modal);
     } 
-    // --- SOUMISSION MODAL 2 ---
     else if (interaction.isModalSubmit() && interaction.customId === 'modal_comp') {
         const data = tempAnswers.get(userId);
         if (!data) return await interaction.reply({ content: "❌ Session expirée.", ephemeral: true });
@@ -333,7 +342,6 @@ client.on('interactionCreate', async (interaction) => {
         );
         await interaction.reply({ content: "✅ Compétences validées ! Place aux scénarios de chat.", components: [row], ephemeral: true });
     } 
-    // --- BOUTON ÉTAPE 3 ---
     else if (interaction.isButton() && interaction.customId === 'open_p3') {
         if (!tempAnswers.has(userId)) return await interaction.reply({ content: "❌ Session introuvable, veuillez réouvrir un ticket.", ephemeral: true });
         
@@ -345,7 +353,6 @@ client.on('interactionCreate', async (interaction) => {
         );
         await interaction.showModal(modal);
     } 
-    // --- SOUMISSION FINALE ET ANALYSE AUTOMATIQUE ---
     else if (interaction.isModalSubmit() && interaction.customId === 'modal_scen') {
         await interaction.deferReply({ ephemeral: true });
         const data = tempAnswers.get(userId);
@@ -369,7 +376,6 @@ client.on('interactionCreate', async (interaction) => {
             { name: '🎭 Scénarios Pratiques', value: `**S1 (Prix) :** ${interaction.fields.getTextInputValue('s1')}\n**S2 (Refus) :** ${interaction.fields.getTextInputValue('s2')}\n**S3 (GFE) :** ${interaction.fields.getTextInputValue('s3')}`, inline: false }
         ];
 
-        // --- CALCUL DU SCORE ---
         let score = 0;
 
         if (txtKyc.includes("connaître") || txtKyc.includes("connaitre") || txtKyc.includes("savoir")) score += 2;
@@ -415,7 +421,6 @@ client.on('interactionCreate', async (interaction) => {
             content: `✅ **Candidature terminée avec succès !**\nLes résultats ont été envoyés dans le salon de contrôle.\n\n⚠️ **Le salon sera supprimé dans 10 secondes.**` 
         });
         
-        // Suppression sécurisée du salon après 10 secondes
         setTimeout(() => {
             if (interaction.channel && interaction.channel.deletable) {
                 interaction.channel.delete().catch(() => {});
