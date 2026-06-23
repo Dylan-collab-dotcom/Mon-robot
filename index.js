@@ -237,6 +237,11 @@ client.on('interactionCreate', async (interaction) => {
                 return await interaction.reply({ content: `⚠️ Tu as déjà un salon ouvert ici : ${existingChannel}`, ephemeral: true });
             }
 
+            // Suppression du message contenant l'embed de bienvenue dans #pick-up pour qu'il ne s'accumule pas
+            if (interaction.message) {
+                await interaction.message.delete().catch(() => {});
+            }
+
             const channel = await guild.channels.create({
                 name: safeName,
                 type: ChannelType.GuildText,
@@ -261,7 +266,9 @@ client.on('interactionCreate', async (interaction) => {
                 components: [menu] 
             });
             
-            await interaction.reply({ content: `✅ Salon créé : ${channel}`, ephemeral: true });
+            // L'interaction répond de manière ÉPHÉMÈRE (le message disparaît et ne reste pas dans le salon public #pick-up)
+            await interaction.reply({ content: `✅ Salon créé avec succès !`, ephemeral: true });
+
         } catch (e) { 
             console.error(e); 
         }
