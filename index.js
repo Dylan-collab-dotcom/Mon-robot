@@ -94,151 +94,75 @@ client.on('messageCreate', async (message) => {
 
     // --- SALON #ENSEIGNEMENT (FORMATION EN EMBEDS) ---
     if (message.channel.id === ANNONCE_CHANNEL_ID && message.content.toLowerCase().trim() === 'formation') {
-        // NOTE: Le message de l'utilisateur est déjà supprimé instantanément par la règle du haut !
-
-        // EMBED 1 : GESTION DES MÉDIAS
+        
+        // EMBED 1 : RÈGLES OPÉRATIONNELLES & LIEN ÉMOTIONNEL
         const embed1 = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 1 : BASES & ATTITUDE')
-            .setDescription("Règles opérationnelles fondamentales pour maximiser la rentabilité des flux de discussion.")
+            .setTitle('🎓 FORMATION CHATTING — RÈGLES & PROCÉDURES')
+            .setDescription("Consignes agence pour convertir vos abonnés efficacement.")
             .addFields(
-                {
-                    name: '📸 1. Gestion Tactique des Médias',
-                    value: "• **Agression :** Évitez d’être trop agressif avec les médias. Alternez et chauffez les clients entre chaque média envoyé.\n" +
-                           "• **Suivi :** Après l'envoi du premier média, utilisez impérativement les messages pré-prédigés.\n" +
-                           "• **Format d'envoi :** Les vidéos peuvent être envoyées toutes en même temps, mais **les photos doivent être envoyées une par une**.\n" +
-                           "• **Demandes urgentes :** En cas de demande personnalisée d’un client, indiquez-le dans la section \"Demandes urgentes\" sur Discord pour un traitement rapide.\n" +
-                           "• **Scripts & Prix :** Un script correspond à des montants de 20, 50, 70, 100 ou 200. Tout est noté dans l’onglet \"Créateur\". Attention : évitez d’envoyer un script de nuit en plein jour !\n" +
-                           "• **Accompagnement :** Toujours accompagner les médias d’un beau message séduisant."
+                { 
+                    name: '1️⃣ LE KYC (Connaissance Client)', 
+                    value: "• **Observation :** À l'ouverture d'un message sur Inflow, lisez toujours l'historique. Ne perdez pas le fil de la discussion entamée par le chatteur précédent.\n" +
+                           "• **Profilage :** Observez ou rebondissez sur ses réponses pour obtenir discrètement son job, sa routine, son âge, etc.\n" +
+                           "• *Exemple :* Utilisez directement le script KYC ou inspirez-en vous pour créer une référence similaire : *« D'ailleurs, tu fais quoi dans la vie en dehors du boulot ? 🤭 »*" 
                 },
-                {
-                    name: '⚡ 2. Vitesse d\'Exécution & Trafic',
-                    value: "• **Navigation :** Ne restez pas uniquement dans la catégorie \"Messages non lus\". Vérifiez constamment la catégorie \"Tous les messages\" pour éviter d’en manquer.\n" +
-                           "• **Actualisation :** Actualisez régulièrement pour ne pas rater de nouvelles demandes.\n" +
-                           "• **Délai :** Répondez aux clients dans un **délai de 3 à 4 minutes maximum**.\n" +
-                           "• **Priorisation :** En cas de trafic élevé, donnez la priorité absolue aux *spenders* (clients dépensiers)."
+                { 
+                    name: '2️⃣ POSITIONNEMENT DE LA CRÉATRICE (Douceur & Fragilité)', 
+                    value: "• Incarnez une personnalité innocente, timide et fragile qui a besoin d'être rassurée (référez-vous à la fiche de la modèle).\n" +
+                           "• **Interdiction** d'être trop agressive ou frontale dans l'approche avec les subs." 
                 },
-                {
-                    name: '🗣️ 3. Manière de Parler aux Clients',
-                    value: "• **Rebondir :** Si vous avez obtenu des informations sur le client, utilisez-les.\n" +
-                           "• **Lien émotionnel :** Le client est là pour trouver une \"copine virtuelle\". Posez-lui des questions personnelles.\n" +
-                           "• **Ponctuation :** Terminez chaque phrase par un **cœur ❤️**. **Évitez de terminer vos phrases par un point (.)**.\n" +
-                           "• **Surnoms :** Appelez toujours les clients par un surnom (par défaut **\"mon chat\"**).\n" +
-                           "• **Phrases Engageantes :** Au lieu de *« Tu veux venir avec moi sous la douche ? »*, dites plutôt *« Mon chat, je vais aller me laver, je t’emmène avec moi. »*"
+                { 
+                    name: '3️⃣ VITESSE D\'EXÉCUTION', 
+                    value: "• Vous disposez de **3 à 4 minutes maximum** pour répondre à chaque sub, qu'il y ait peu ou beaucoup de messages non lus (unread)." 
                 }
             );
 
-        // EMBED 2 : SCRIPT TUNNEL — PHASE 1
+        // EMBED 2 : PRIORISATIONS & MANIÈRE DE PARLER
         const embed2 = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 2 : SCRIPT TUNNEL (PHASE 1)')
+            .setTitle('🎓 FORMATION CHATTING — PRIORITÉS & ENGAGEMENT')
             .addFields(
-                {
-                    name: '🎯 PHASE 1 — Accroche & Profilage',
-                    value: "**Objectif :** Récupérer prénom, âge, ville, job + créer un lien doux/taquin.\n\n" +
-                           "**Questions à copier/coller obligatoirement :**\n" +
-                           "• *tu t'appelle comment? 👀*\n" +
-                           "• *Tu viens d’où ?*\n" +
-                           "• *D’ailleurs tu as quel âge ? J’aime bien savoir à qui je parle :))*\n" +
-                           "• *Et tu vis où ?*\n" +
-                           "• *D’ailleurs tu fait quoi dans la vie ? 🤭*\n" +
-                           "• *Tu fais quoi de tes journées en dehors du boulot ?*"
+                { 
+                    name: '4️⃣ GESTION DES PRIORITÉS (Trafic élevé)', 
+                    value: "Classez vos actions par ordre d'importance :\n" +
+                           "1. **Spenders** (abonnés ayant déjà dépensé).\n" +
+                           "2. **Abonnés en cours de sexualisation** ou en phase de script.\n" +
+                           "3. **Nouveaux abonnés** (Pensez à les ajouter dans le tab en cliquant sur *Open new tab* s'ils n'y sont pas)." 
                 },
-                {
-                    name: '📌 Branches Spécifiques selon l\'Âge',
-                    value: "• **S'il est plus âgé :** « Ahh c’est stylé j’aime bien les mecs un peu plus âgés... »\n" +
-                           "• **S'il est plus jeune (>=18) :** « Haha cool j’aime bien les gars plus jeunes 😋 »"
-                },
-                {
-                    name: '📖 Présentation Perso Storytelling',
-                    value: "« Moi je suis étudiante en marketing :) j’essaye de me débrouiller comme je peux... »"
-                },
-                {
-                    name: '🛑 Gestion des Demandes IRL / Réseaux Précoces',
-                    value: "• **1ère fois :** « Faisons connaissance et puis on verra où le vent nous mène »\n" +
-                           "• **2ème fois :** « Franchement, je suis un peu déçue... Je suis sur OnlyFans parce que c’est compliqué financièrement... »\n" +
-                           "• **CTA de redirection :** « je te garde avec moi pendant que je me prépare… tu veux voir ? »"
+                { 
+                    name: '5️⃣ MANIÈRE DE PARLER (Un lien émotionnel = de l\'argent)', 
+                    value: "• Utilisez des surnoms affectifs (par défaut : *« mon chat »*).\n" +
+                           "• Rendez vos messages captivants et engageants. Ne soyez pas un bot robotique.\n\n" +
+                           "❌ **À NE PAS FAIRE (fade) :**\n" +
+                           "*Sub : Tu fais quoi là ?*\n" +
+                           "*Chatter : Je ne fais rien et toi ? Je suis posé sur mon lit et toi ?*\n\n" +
+                           "✅ **À FAIRE (immersif et vendeur) - Ancien Spender :**\n" +
+                           "*« Mon chat, je vais aller sous la douche, j'aimerais bien que tu sois avec moi sous l'eau chaude pour me laver et me caresser partout... 😘 Je sens déjà l'excitation monter en pensant à tes mains sur ma peau »*\n\n" +
+                           "✅ **À FAIRE (immersif et vendeur) - Nouveau Sub :**\n" +
+                           "*« Je suis installée sur le canapé devant un film, mais je n'arrive pas à me concentrer... »*" 
                 }
             );
 
-        // EMBED 3 : SCRIPT TUNNEL — PHASE 2 & 3
+        // EMBED 3 : LE BUT & GESTION DU SEXE
         const embed3 = new EmbedBuilder()
             .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 2 : TUNNEL (PHASE 2 & 3)')
+            .setTitle('🎓 FORMATION CHATTING — GESTION DU TUNNEL DE VENTE')
             .addFields(
-                {
-                    name: '🎯 PHASE 2 — Approfondissement & Cadrage',
-                    value: "• *Depuis combien de temps tu es sur OF ?*\n• *Tu as une copine en ce moment ?*\n• *C’est quoi ton type de fille ?*"
-                },
-                {
-                    name: '🎯 PHASE 3 — La Question de Qualification Clé',
-                    value: "Ouverture obligatoire : *« Bon ok, j’ai une question à te poser... qu’est-ce qui t’a vraiment ramené ici ? »*\n" +
-                           "• **A) LES SEINS :** ➔ CTA: « je t’envoie un petit aperçu privé ? »\n" +
-                           "• **B) TON CUL :** ➔ CTA: « tu veux la vue arrière maintenant ? »\n" +
-                           "• **C) JUSTE POUR PARLAR :** « tu crois que tu pourrais me faire passer mon ennui ? »"
-                },
-                {
-                    name: '⚡ RÈGLES D’OR INVIOLABLES DES CHATTEURS',
-                    value: "• **Chaque abonné vaut de l’or 💰**\n• **Ne jamais virer un abo 🚫**\n• **Discipline = Cash**"
+                { 
+                    name: '6️⃣ LE BUT : LAISSER LE SUB SEXUALISER EN PREMIER', 
+                    value: "La règle d'or : **C'est l'abonné qui doit aborder le sexe en premier**, pas vous.\n" +
+                           "Votre rôle est d'ouvrir la porte de manière indirecte et innocente, en le laissant deviner.\n\n" +
+                           "💡 **Exemple d'ouverture sexy indirecte :**\n" +
+                           "• *Vous dites :* « J'ai eu une journée de malade... J'ai trop besoin d'une douche pour me changer les idées. »\n" +
+                           "• *L'effet produit :* Cela laisse deviner, cela reste innocent, cela ouvre une brèche, et c'est **LUI** qui va sexualiser l'échange le premier." 
                 }
-            );
-
-        // EMBED 4 : GESTION DES OBJECTIONS
-        const embed4 = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 3 : TRAITEMENT DES OBJECTIONS')
-            .setDescription("Une objection est une barrière psychologique. Votre mission : **Reconnaître** puis **Escalader** sexuellement.")
-            .addFields(
-                { name: '❌ L\'objection universelle : « Je n’ai pas d’argent. »', value: "The secret réside dans l'analyse immédiate de la situation parmi les 4 cas de figure réels." },
-                { name: '🔍 Cas 1 & Cas 2 : Texte ou Fin de Plaisir', value: "**• Cas 1 (Copywriting) :** Décrivez la scène de manière immersive.\n**• Cas 2 (Déjà joui) :** Posez la question cash, passez en aftercare bienveillant." },
-                { name: '🔍 Cas 3 & Cas 4 : Concurrence ou Blocage Réel', value: "**• Cas 3 (Autre créatrice) :** Donnez plus de valeur relationnelle.\n**• Cas 4 (Pas d'argent) :** Proposez une offre flash au budget restant." }
-            );
-
-        // EMBED 5 : EXEMPLES DE SCRIPT REELS
-        const embed5 = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 3 : ANALYSE DE CAS RÉELS')
-            .addFields(
-                { name: '🎭 Situation Pratique 1 (Prix de $60)', value: "• *Fan :* « j’aimerais trop te baiser... »\n• *Réponse Élite :* Projetez-le directement dans le fantasme du média payant sans mentionner le blocage du prix." },
-                { name: '🎭 Situation Pratique 2 (Hésitation finale)', value: "• *Fan :* « bébé t’es trop sexy je crois que je vais devoir débloquer ça »\n• *Réponse Élite :* Intensification sexuelle massive et création de FOMO." }
-            );
-
-        // EMBED 6 : LE CHOUINAGE COMMERCIAL & CLOSING
-        const embed6 = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setTitle('🎓 FORMATION CHATTING — MODULE 4 : CLOSING ÉLITE & COPYWRITING')
-            .addFields(
-                { name: '👑 Masterclass : Le Chouinage Commercial', value: "Utiliser une fragilité contrôlée (instinct de sauveur).\nStructure : Moment dur ➔ Valorisation ➔ Tendresse ➔ Ouverture payante." },
-                { name: '🚫 Méthode A-Player : Closer sans mentionner d\'argent', value: "Étape 1 : Brèche émotionnelle.\nÉtape 2 : Vidéo selfie douce explicative." },
-                { name: '✍️ Les 3 Lois Secrètes du Copywriting Agency', value: "• **Loi 1 :** Parlez d'envie, pas de prix.\n• **Loi 2 :** Parlez d'un moment partagé, pas d'un fichier numérique.\n• **Loi 3 :** Créez une attente insoutenable." }
-            );
-
-        // EMBED 7 : MÉTHODE KYC (PARTIE 1)
-        const embed7 = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setTitle('🎓 MODULE 5 : MÉTHODE KYC (CONNAISSANCE CLIENT)')
-            .setDescription("Un fan connu est un fan qui paye. Ne soyez pas des bots.")
-            .addFields( 
-                { name: '🔍 Observer avant de parler', value: "Vérifiez anciennes conversations, achats, likes et heures d'activity pour éviter de poser des questions doublons." },
-                { name: '💬 Démarrer avec une question simple', value: "Commencez naturellement : « How se passe ta journée ? », pour découvrir sa routine." },
-                { name: '🛠️ Creuser progressivement', value: "Rebondissez sur sa réponse pour discrètement obtenir son job, ses horaires et sa routine." }
-            )
-            .setFooter({ text: 'Spider-Society • Page 1/2' });
-
-        // EMBED 8 : MÉTHODE KYC (PARTIE 2)
-        const embed8 = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setTitle('🎓 MÉTHODE KYC – MARCHE À SUIVRE POUR LES CHATTEURS (2/2)')
-            .addFields(
-                { name: '❤️ Découvrir sa vie personnelle', value: "Posez des questions sur sa situation amoureuse, ses hobbies ou son style de vie." },
-                { name: '🎯 Identifier ses préférences', value: "Comprenez son format d'achat favori : préfère-t-il les photos ou les vidéos ?" },
-                { name: '💾 Noter les infos importantes', value: "Chaque information doit être impérativement enregistrée dans sa fiche note (Fan Note)." }
             )
             .setFooter({ text: 'Spider-Society • Discipline = Cash 🔑' });
 
-        await message.channel.send({ embeds: [embed1, embed2, embed3] });
-        await message.channel.send({ embeds: [embed4, embed5, embed6] });
-        await message.channel.send({ embeds: [embed7, embed8] });
+        await message.channel.send({ embeds: [embed1] });
+        await message.channel.send({ embeds: [embed2] });
+        await message.channel.send({ embeds: [embed3] });
     }
 });
 
@@ -391,7 +315,7 @@ client.on('interactionCreate', async (interaction) => {
         if (txtS3.includes("copine") || txtS3.includes("girlfriend") || txtS3.includes("relation") || txtS3.includes("attachement")) score += 2;
 
         if (txtChatting.includes("fidélis") || txtS3.includes("fidélis") || txtChatting.includes("long terme") || txtS3.includes("long terme")) score += 2;
-        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtChatting.includes("émotion")) score += 2;
+        if (txtChatting.includes("quotidien") || txtS3.includes("quotidien") || txtChatting.includes("amour") || txtS3.includes("émotion")) score += 2;
 
         const noteFinale = Math.min(Math.round(score), 20);
 
